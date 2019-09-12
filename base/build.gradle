@@ -1,0 +1,99 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion rootProject.ext.compileSdk
+    buildToolsVersion rootProject.ext.buildTools
+
+    defaultConfig {
+        minSdkVersion rootProject.ext.minSdk
+        targetSdkVersion rootProject.ext.targetSdk
+        versionCode rootProject.ext.versionCode
+        versionName rootProject.ext.versionName
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = [AROUTER_MODULE_NAME: project.getName()]
+            }
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    api "com.android.support:support-annotations:${rootProject.ext.SUPPORT_VERSION}"
+    api "com.android.support:appcompat-v7:${rootProject.ext.SUPPORT_VERSION}"
+    api "com.android.support:support-v4:${rootProject.ext.SUPPORT_VERSION}"
+    api "com.android.support:recyclerview-v7:${rootProject.ext.SUPPORT_VERSION}"
+    api "com.android.support:design:${rootProject.ext.SUPPORT_VERSION}"
+    api "com.android.support:cardview-v7:${rootProject.ext.SUPPORT_VERSION}"
+
+    api 'com.android.support.constraint:constraint-layout:1.1.2'
+    api 'com.android.support:multidex:1.0.1'
+
+    //轮播图
+    api 'com.youth.banner:banner:1.4.10'
+    //butterknife
+    api ("com.jakewharton:butterknife:${rootProject.ext.butterknife}"){
+        exclude module: 'appcompat-v7'
+        exclude group: 'com.android.support'
+    }
+    annotationProcessor ("com.jakewharton:butterknife-compiler:${rootProject.ext.butterknife}"){
+        exclude module: 'appcompat-v7'
+        exclude group: 'com.android.support'
+    }
+    //arouter
+    api "com.alibaba:arouter-api:${rootProject.ext.arouter_api}"
+    annotationProcessor "com.alibaba:arouter-compiler:${rootProject.ext.arouter_annotation}"
+    //glide
+    api "com.github.bumptech.glide:glide:${rootProject.ext.glide}"
+    //网络
+    api "com.squareup.okhttp3:okhttp:${rootProject.ext.okhttp3}"
+    api "com.squareup.okhttp3:logging-interceptor:${rootProject.ext.okhttp3}"
+    api "com.squareup.retrofit2:retrofit:${rootProject.ext.retrofit}"
+    api "com.squareup.retrofit2:converter-gson:${rootProject.ext.retrofit}"
+    //rxjava
+    api "com.squareup.retrofit2:adapter-rxjava2:${rootProject.ext.retrofit}"
+    api "io.reactivex.rxjava2:rxjava:${rootProject.ext.rxjava}"
+    api "io.reactivex.rxjava2:rxandroid:${rootProject.ext.rxandroid}"
+    api "com.github.tbruyelle:rxpermissions:${rootProject.ext.rxpermissions}"
+
+    api 'com.trello.rxlifecycle2:rxlifecycle:2.2.2'
+    api 'com.trello.rxlifecycle2:rxlifecycle-android:2.2.2'
+    api 'com.trello.rxlifecycle2:rxlifecycle-components:2.2.2'
+    api 'com.trello.rxlifecycle2:rxlifecycle-navi:2.2.2'
+    api 'com.google.code.gson:gson:2.8.5'
+//    api 'org.projectlombok:lombok:1.16.6'
+//    api 'org.glassfish:javax.annotation:10.0-b28'
+    // 带侧边字母的列表
+    //implementation 'com.camnter.easyrecyclerviewsidebar:easyrecyclerviewsidebar:1.3'
+    //兼容7.0的图片选择和适配
+    //implementation 'com.github.arvinljw:PictureSelector:v2.0.6'
+    //侧滑layout
+    //implementation 'com.github.mcxtzhang:SwipeDelMenuLayout:V1.3.0'
+
+    //流式布局
+    //implementation 'com.google.android:flexbox:1.0.0'
+    //支持gif图片
+    //implementation 'com.facebook.fresco:animated-gif:1.9.0'
+
+
+    //dagger2
+    //annotationProcessor libraries.daggerCompiler
+}
