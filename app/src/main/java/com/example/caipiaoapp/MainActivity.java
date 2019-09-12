@@ -9,6 +9,7 @@ import com.example.base.base.BaseActivity;
 import com.example.base.retrofit.ApiService;
 import com.example.base.retrofit.RetrofitServiceCreator;
 import com.example.base.rx.RxEvent;
+import com.example.base.util.LogUtils;
 import com.example.base.util.ToastUtils;
 import com.example.base.util.cacheUtil.CacheFile;
 
@@ -18,6 +19,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -35,6 +37,8 @@ public class MainActivity extends BaseActivity {
     private int count;
     @BindView(R.id.bt_getData)
     Button btGetData;
+    private ApiService apiService;
+    private WaitingDialogStyle1 waitingDialogStyle1;
 
     @Override
     protected int getContentLayoutId() {
@@ -43,20 +47,30 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void initWidget() {
-
+        waitingDialogStyle1 = new WaitingDialogStyle1(MainActivity.this);
     }
 
     @Override
     protected void initData() {
-
+        CacheFile cacheFile = new CacheFile();
+//        SSQHistoryDataBean ssqHistoryDataBean = cacheFile.getCacheClass("SSQHISTORY",SSQHistoryDataBean.class);
+//        if (ssqHistoryDataBean!=null){
+//            ballBeans = ssqHistoryDataBean.getBallBeans();
+//            LogUtils.d(String.format(Locale.ENGLISH,"最新一期：%s  最后一期：%s",ballBeans.get(0).getQiShu()
+//                    ,ballBeans.get(ballBeans.size()-1).getQiShu()));
+//
+//        }
+        apiService = RetrofitServiceCreator.createServcie(ApiService.class);
     }
 
     public void getData() {
-
-        ApiService apiService = RetrofitServiceCreator.createServcie(ApiService.class);
+        if (!waitingDialogStyle1.isShowing()){
+            waitingDialogStyle1.show();
+        }
         apiService.getHistory("jsonp1532326738107", String.valueOf(qiShu)).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                count++;
                 InputStream is = response.body().byteStream();
                 ByteArrayOutputStream result = new ByteArrayOutputStream();
                 byte[] buffer = new byte[1024];
@@ -70,9 +84,11 @@ public class MainActivity extends BaseActivity {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+                LogUtils.d(str);
                 String[] strings = str.split("\\*");
 
                 if (strings.length >= 10) {
+                    LogUtils.d("qiShu："+qiShu+"   count:"+count);
                     List<String> redBalls = new ArrayList<>();
                     List<String> blueBalls = new ArrayList<>();
                     for (int i = 4; i < strings.length - 1; i++) {
@@ -88,12 +104,24 @@ public class MainActivity extends BaseActivity {
                     ssqBallBean.setBlueBalls(blueBalls);
                     ballBeans.add(ssqBallBean);
                 }
-                saveData();
+                qiShu--;
+                if (qiShu<2019001){
+                    saveData();
+                    if (waitingDialogStyle1.isShowing()){
+                        waitingDialogStyle1.dismiss();
+                    }
+                }else {
+                    getData();
+                }
+
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-
+                if (waitingDialogStyle1.isShowing()){
+                    waitingDialogStyle1.dismiss();
+                }
+                LogUtils.e(t.getMessage());
             }
         });
     }
