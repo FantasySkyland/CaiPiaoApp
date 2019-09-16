@@ -1,9 +1,10 @@
-package com.example.caipiaoapp;
+package com.example.caipiaoapp.dialog;
 
 import android.content.Context;
 import android.view.View;
 
 import com.example.base.dialog.BaseDialog;
+import com.example.caipiaoapp.R;
 
 /**
  * @author : sklyand

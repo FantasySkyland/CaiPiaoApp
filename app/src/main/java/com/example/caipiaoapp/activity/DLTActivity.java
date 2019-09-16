@@ -1,6 +1,7 @@
 package com.example.caipiaoapp.activity;
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -14,12 +15,13 @@ import com.example.base.base.BaseActivity;
 import com.example.base.retrofit.RetrofitServiceCreator;
 import com.example.base.rx.RxEvent;
 import com.example.base.util.cacheUtil.CacheFile;
-import com.example.caipiaoapp.CaiPiaoApi;
-import com.example.caipiaoapp.HistoryAdapter;
-import com.example.caipiaoapp.HistoryBean;
+import com.example.caipiaoapp.Constans;
+import com.example.caipiaoapp.net.CaiPiaoApi;
+import com.example.caipiaoapp.adapter.HistoryAdapter;
+import com.example.caipiaoapp.bean.HistoryBean;
 import com.example.caipiaoapp.R;
-import com.example.caipiaoapp.SSQBallBean;
-import com.example.caipiaoapp.SSQHistoryDataBean;
+import com.example.caipiaoapp.bean.SSQBallBean;
+import com.example.caipiaoapp.bean.SSQHistoryDataBean;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
@@ -27,7 +29,6 @@ import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -36,7 +37,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends BaseActivity implements OnRefreshListener, OnLoadMoreListener {
+public class DLTActivity extends BaseActivity implements OnRefreshListener, OnLoadMoreListener {
 
 
     @BindView(R.id.smart_refresh)
@@ -56,7 +57,13 @@ public class MainActivity extends BaseActivity implements OnRefreshListener, OnL
 
     private CaiPiaoApi caiPiaoApi;
     private HistoryAdapter historyAdapter;
+    private String id;
 
+    public static void start(Context context,String id) {
+        Intent intent = new Intent(context, DLTActivity.class);
+        intent.putExtra("id",id);
+        context.startActivity(intent);
+    }
     @Override
     protected int getContentLayoutId() {
         return R.layout.activity_main;
@@ -74,6 +81,7 @@ public class MainActivity extends BaseActivity implements OnRefreshListener, OnL
 
     @Override
     protected void initData() {
+        id = getIntent().getStringExtra("id");
         //getData("dlt", true);
     }
 
@@ -84,11 +92,14 @@ public class MainActivity extends BaseActivity implements OnRefreshListener, OnL
         } else {
             page++;
         }
-        caiPiaoApi.getHistory("9b697954e6142a378d3d2f43e2047c18", lottery_id,
+        caiPiaoApi.getHistory(Constans.APP_KEY, lottery_id,
                 page, 50).enqueue(new Callback<HistoryBean>() {
             @Override
             public void onResponse(Call<HistoryBean> call, Response<HistoryBean> response) {
                 HistoryBean historyBean = response.body();
+                if (historyBean == null||historyBean.getResult()==null){
+                    return;
+                }
                 if (refresh) {
                     smartRefresh.setEnableLoadMore(true);
                     historyAdapter.replace(historyBean.getResult().getLotteryResList());
@@ -118,17 +129,20 @@ public class MainActivity extends BaseActivity implements OnRefreshListener, OnL
 
     private void update(){
         CacheFile cacheFile = new CacheFile();
-        SSQHistoryDataBean ssqHistoryDataBean = cacheFile.getCacheClass("SSQHistoryDataBean", SSQHistoryDataBean.class);
+        SSQHistoryDataBean ssqHistoryDataBean = cacheFile.getCacheClass(id+Constans.CACHE_KEY, SSQHistoryDataBean.class);
          long cacheLatest = 0;
         if (ssqHistoryDataBean!=null){
               cacheLatest = Long.valueOf(ssqHistoryDataBean.getLotteryResListBeans().get(0).getLottery_no());
         }
         if (cacheLatest>0){
-            caiPiaoApi.getHistory("9b697954e6142a378d3d2f43e2047c18", "dlt",
+            caiPiaoApi.getHistory(Constans.APP_KEY, id,
                     1, 50).enqueue(new Callback<HistoryBean>() {
                 @Override
                 public void onResponse(Call<HistoryBean> call, Response<HistoryBean> response) {
                     HistoryBean historyBean = response.body();
+                    if (historyBean == null||historyBean.getResult()==null){
+                        return;
+                    }
                     List<HistoryBean.ResultBean.LotteryResListBean> lotteryResList
                             = historyBean.getResult().getLotteryResList();
                     long no = Long.valueOf(lotteryResList.get(0).getLottery_no());
@@ -158,7 +172,7 @@ public class MainActivity extends BaseActivity implements OnRefreshListener, OnL
                         }
                         ssqHistoryDataBean.getBallBeans().addAll(0,addList2);
                         ssqHistoryDataBean.getLotteryResListBeans().addAll(0,addList);
-                        CacheFile.saveClass("SSQHistoryDataBean", ssqHistoryDataBean);
+                        CacheFile.saveClass(id+Constans.CACHE_KEY, ssqHistoryDataBean);
                     }
                 }
 
@@ -196,18 +210,18 @@ public class MainActivity extends BaseActivity implements OnRefreshListener, OnL
         SSQHistoryDataBean ssqHistoryDataBean = new SSQHistoryDataBean();
         ssqHistoryDataBean.setBallBeans(ballBeans);
         ssqHistoryDataBean.setLotteryResListBeans(lotteryResListBeans);
-        CacheFile.saveClass("SSQHistoryDataBean", ssqHistoryDataBean);
+        CacheFile.saveClass(id+Constans.CACHE_KEY, ssqHistoryDataBean);
     }
 
 
     @Override
     public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
-        getData("dlt", false);
+        getData(id, false);
     }
 
     @Override
     public void onRefresh(@NonNull RefreshLayout refreshLayout) {
-        getData("dlt", true);
+        getData(id, true);
     }
 
     @Override
@@ -221,13 +235,13 @@ public class MainActivity extends BaseActivity implements OnRefreshListener, OnL
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.bt_getData:
-                getData("dlt", true);
+                getData(id, true);
                 break;
             case R.id.bt_saveData:
                 saveData();
                 break;
             case R.id.bt_analysis:
-                AnalysisActivity.start(MainActivity.this);
+                AnalysisActivity.start(DLTActivity.this,id);
             case R.id.bt_update:
                 update();
                 break;

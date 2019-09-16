@@ -1,4 +1,4 @@
-package com.example.caipiaoapp;
+package com.example.caipiaoapp.bean;
 
 import java.util.List;
 
