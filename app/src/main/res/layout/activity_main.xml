@@ -4,16 +4,51 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".activity.MainActivity">
     <Button
         android:id="@+id/bt_getData"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="getData"/>
+        android:text="刷新数据"/>
     <Button
         android:layout_toRightOf="@id/bt_getData"
-        android:id="@+id/bt_show"
+        android:id="@+id/bt_saveData"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="show"/>
+        android:text="保存数据"/>
+    <Button
+        android:layout_toRightOf="@id/bt_saveData"
+        android:id="@+id/bt_analysis"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="分析"/>
+    <Button
+        android:layout_toRightOf="@id/bt_analysis"
+        android:id="@+id/bt_update"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="更新到最新"/>
+    <TextView
+        android:layout_below="@id/bt_getData"
+        android:id="@+id/tv_lottery_no"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <com.scwang.smartrefresh.layout.SmartRefreshLayout
+        android:layout_below="@id/tv_lottery_no"
+        android:id="@+id/smart_refresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <com.scwang.smartrefresh.layout.header.ClassicsHeader
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <android.support.v7.widget.RecyclerView
+            android:layout_below="@id/bt_getData"
+            android:id="@+id/rv_data"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+        <com.scwang.smartrefresh.layout.footer.ClassicsFooter
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </com.scwang.smartrefresh.layout.SmartRefreshLayout>
 </RelativeLayout>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.caipiaoapp.activity.AnalysisActivity">
+
+    <Button
+        android:id="@+id/bt_analysis1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="分析一"/>
+    <TextView
+        android:id="@+id/tv_data_info"
+        android:layout_below="@id/bt_analysis1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <TextView
+        android:id="@+id/tv_result"
+        android:layout_below="@id/bt_analysis1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#000"
+        android:textSize="15sp"/>
+
+
+        <android.support.v7.widget.RecyclerView
+            android:layout_below="@id/tv_result"
+            android:id="@+id/rv_data"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+</RelativeLayout>

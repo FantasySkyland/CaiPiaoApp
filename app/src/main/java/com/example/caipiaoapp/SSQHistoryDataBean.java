@@ -10,6 +10,15 @@ import java.util.List;
  */
 public class SSQHistoryDataBean {
 
+    private List<HistoryBean.ResultBean.LotteryResListBean> lotteryResListBeans;
+
+    public List<HistoryBean.ResultBean.LotteryResListBean> getLotteryResListBeans() {
+        return lotteryResListBeans;
+    }
+
+    public void setLotteryResListBeans(List<HistoryBean.ResultBean.LotteryResListBean> lotteryResListBeans) {
+        this.lotteryResListBeans = lotteryResListBeans;
+    }
 
     private List<SSQBallBean> ballBeans;
 
